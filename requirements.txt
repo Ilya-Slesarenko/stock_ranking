@@ -1,0 +1,9 @@
+git+https://github.com/Awethon/open-api-python-client
+httplib2 == 0.20.2
+google-api-python-client
+yfinance == 0.1.63
+apscheduler == 3.8.1
+oauth2client == 4.1.3
+numpy == 1.19.5
+pandas == 1.2.4
+pandas_datareader == 0.9.0
