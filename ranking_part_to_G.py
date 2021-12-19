@@ -249,7 +249,3 @@ class RankingClass():
         }).execute()
 
         print(f'Done!')
-
-
-if __name__ == '__main__':
-    RankingClass().spreadsheet_forming()
