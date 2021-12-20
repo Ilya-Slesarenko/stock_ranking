@@ -91,7 +91,25 @@ class RankingClass():
         headers = ['Time_key', 'Ticker', 'Полное наименование компании', 'Сектор', 'Страна', 'Рыночная капитализация, $млн.', 'Стоимость компании, $млн.', 'P/S', 'P/E', 'P/B', 'Маржинальность', 'Стоимость компании / Выручка', 'Стоимость компании / EBITDA', 'Годовая дивидендная доходность', 'Див.доходность за 5 лет', 'Крайняя дата выплаты дивидендов', 'FreeCashFlow', 'DebtToEquity', 'ROA_ReturnOnAssets', 'EBITDA', 'TargetMedianPrice', 'NumberOfAnalystOpinions', 'Trailing_EPS_EarningsPerShare', 'verdict_whole_period', 'probability_to_drop_over_40', 'ma_buy_now_10_50_decisions', 'ma_buy_now_5_10_decisions', 'latest_ma_50', 'latest_ma_10', 'latest_ma_5', 'latest_Close']
         final_list = [headers]
         print(f'gathering data for {len(self.tickers_list)} tickers')
+        
+        # reading the ranking page to clear it up
+        results_rank = self.service.spreadsheets().values().batchGet(spreadsheetId=self.ranking_page, ranges='A:AE', valueRenderOption='FORMATTED_VALUE', dateTimeRenderOption='FORMATTED_STRING').execute()
+        rank_sheet_values = results_rank['valueRanges'][0]['values']
+        rank_head = rank_sheet_values[0]
 
+        # clear_data
+        rank_clear_up_range = []  # выбираем заполненные значения, определяем нулевую матрицу для обнуления страницы
+        for _ in rank_sheet_values:  # число строк с текущим заполнением
+            rank_clear_up_range.append([str('')] *len(rank_head))
+
+        null_matrix = self.service.spreadsheets().values().batchUpdate(spreadsheetId=self.ranking_page, body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [{"range": "Update",
+                      "majorDimension": "ROWS",
+                      "values": rank_clear_up_range}]
+        }).execute()
+        
+        
         for ticker in self.tickers_list:
             time.sleep(2)
             from_yfinance = self.yfinance_data(ticker)
@@ -211,38 +229,25 @@ class RankingClass():
                     P_E = 0
 
 
-                final_text = [str(date.today()), ticker, company_name, sector, country, m_cap, enterp_val, P_S_12_m, P_E, P_B, marg, enterprToRev, enterprToEbitda, yr_div, five_yr_div_yield, div_date, FreeCashFlow, DebtToEquity, ROA_ReturnOnAssets, EBITDA, TargetMedianPrice, NumberOfAnalystOpinions, Trailing_EPS_EarningsPerShare] + from_yfinance
-                final_list.append(final_text)
+                final_text = [[str(date.today()), ticker, company_name, sector, country, m_cap, enterp_val, P_S_12_m, P_E, P_B, marg, enterprToRev, enterprToEbitda, yr_div, five_yr_div_yield, div_date, FreeCashFlow, DebtToEquity, ROA_ReturnOnAssets, EBITDA, TargetMedianPrice, NumberOfAnalystOpinions, Trailing_EPS_EarningsPerShare] + from_yfinance]
+                # final_list.append(final_text)
+
+                # заполнение
+                results = self.service.spreadsheets().values().batchUpdate(spreadsheetId=self.ranking_page, body={
+                    "valueInputOption": "USER_ENTERED",
+                    "data": [{"range": "Update",
+                              "majorDimension": "ROWS",
+                              "values": final_text}]
+                }).execute()
+                
                 print(f'Done for: {ticker}, {self.tickers_list.index(ticker) + 1} out of {len(self.tickers_list)}')
 
             except:
                 print(f'Exception at yf getting data, might be TypeError etc.')
                 pass
 
+       
+
         
-        # reading the ranking page to clear it up
-        results_rank = self.service.spreadsheets().values().batchGet(spreadsheetId=self.ranking_page, ranges='A:AE', valueRenderOption='FORMATTED_VALUE', dateTimeRenderOption='FORMATTED_STRING').execute()
-        rank_sheet_values = results_rank['valueRanges'][0]['values']
-        rank_head = rank_sheet_values[0]
-
-        # clear_data
-        rank_clear_up_range = []  # выбираем заполненные значения, определяем нулевую матрицу для обнуления страницы
-        for _ in rank_sheet_values:  # число строк с текущим заполнением
-            rank_clear_up_range.append([str('')] *len(rank_head))
-
-        null_matrix = self.service.spreadsheets().values().batchUpdate(spreadsheetId=self.ranking_page, body={
-            "valueInputOption": "USER_ENTERED",
-            "data": [{"range": "Update",
-                      "majorDimension": "ROWS",
-                      "values": rank_clear_up_range}]
-        }).execute()
-
-        # заполнение
-        results = self.service.spreadsheets().values().batchUpdate(spreadsheetId=self.ranking_page, body={
-            "valueInputOption": "USER_ENTERED",
-            "data": [{"range": "Update",
-                      "majorDimension": "ROWS",
-                      "values": final_list}]
-        }).execute()
 
         print(f'Done!')
