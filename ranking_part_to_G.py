@@ -228,26 +228,22 @@ class RankingClass():
                 except ZeroDivisionError:
                     P_E = 0
 
-
                 final_text = [[str(date.today()), ticker, company_name, sector, country, m_cap, enterp_val, P_S_12_m, P_E, P_B, marg, enterprToRev, enterprToEbitda, yr_div, five_yr_div_yield, div_date, FreeCashFlow, DebtToEquity, ROA_ReturnOnAssets, EBITDA, TargetMedianPrice, NumberOfAnalystOpinions, Trailing_EPS_EarningsPerShare] + from_yfinance]
-                # final_list.append(final_text)
 
                 # заполнение
-                results = self.service.spreadsheets().values().batchUpdate(spreadsheetId=self.ranking_page, body={
-                    "valueInputOption": "USER_ENTERED",
-                    "data": [{"range": "Update",
-                              "majorDimension": "ROWS",
-                              "values": final_text}]
-                }).execute()
+                resource = {"majorDimension": "ROWS", "values": final_text}
+                range = "Update!A:AE";
+                self.service.spreadsheets().values().append(
+                    spreadsheetId=self.ranking_page,
+                    range=range,
+                    body=resource,
+                    valueInputOption="USER_ENTERED"
+                ).execute()
                 
                 print(f'Done for: {ticker}, {self.tickers_list.index(ticker) + 1} out of {len(self.tickers_list)}')
 
             except:
                 print(f'Exception at yf getting data, might be TypeError etc.')
                 pass
-
-       
-
-        
 
         print(f'Done!')
