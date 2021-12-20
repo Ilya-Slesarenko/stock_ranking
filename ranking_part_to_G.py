@@ -92,7 +92,7 @@ class RankingClass():
         final_list = [headers]
         print(f'gathering data for {len(self.tickers_list)} tickers')
 
-        for ticker in self.tickers_list[:15]:
+        for ticker in self.tickers_list:
             from_yfinance = self.yfinance_data(ticker)
             try:
                 t_info = yf.Ticker(ticker).info
