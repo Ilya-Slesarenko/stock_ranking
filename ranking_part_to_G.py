@@ -38,7 +38,6 @@ class RankingClass():
 
     def yfinance_data(self, comp):
         
-        print(f'parsing from yfinance data for {comp}')
         yf.pdr_override()
         data = pdr.get_data_yahoo(comp, self.start, self.end, threads=False)
         data['PriceDiff'] = data['Close'].shift(-1) - data['Close']
@@ -76,7 +75,6 @@ class RankingClass():
         latest_ma10 = round(listed_values[-1][-7], 2)
         latest_ma50 = round(listed_values[-1][-8], 2)
         stock_list_data = [verdict_whole_period, round(prob_to_drop_over_40 * 100, 2), round(buy_now_10_50__decision, 2), round(buy_now_5_10__decision, 2), latest_ma50, latest_ma10, latest_ma5, latest_close_price]
-        print(f'stock_list_data, from_yfinance in initial part: {stock_list_data}')
         return stock_list_data
 
 
