@@ -7,6 +7,6 @@ def job_function():
     RankingClass().spreadsheet_forming()
 
 shed = BlockingScheduler()
-shed.add_job(job_function, 'cron', day_of_week='mon', hour=19, minute=34)  # launch on Saturday morning (6 AM Moscow time)
+shed.add_job(job_function, 'cron', day_of_week='mon', hour=20, minute=2)  # launch on Saturday morning (6 AM Moscow time)
 # shed.add_job(job_function, 'cron', day_of_week='sun', hour=2, minute=3)  # launch on Sunday morning (6 AM Moscow time)
 shed.start()
