@@ -60,7 +60,6 @@ class RankingClass():
         verdict_whole_period = round(data['wealth'][-2], 2)
 
         data['LogReturn'] = np.log(data['Close']).shift(-1) - np.log(data['Close'])
-        data['LogReturn'].hist(bins=50)
         mu = data['LogReturn'].mean()  # approximate mean
         sigma = data['LogReturn'].std(ddof=1)  # variance of the log daily return
 
