@@ -89,7 +89,6 @@ class RankingClass():
     # stock_market fundamental data from yfinance
     def spreadsheet_forming(self):
         headers = ['Time_key', 'Ticker', 'Полное наименование компании', 'Сектор', 'Страна', 'Рыночная капитализация, $млн.', 'Стоимость компании, $млн.', 'P/S', 'P/E', 'P/B', 'Маржинальность', 'Стоимость компании / Выручка', 'Стоимость компании / EBITDA', 'Годовая дивидендная доходность', 'Див.доходность за 5 лет', 'Крайняя дата выплаты дивидендов', 'FreeCashFlow', 'DebtToEquity', 'ROA_ReturnOnAssets', 'EBITDA', 'TargetMedianPrice', 'NumberOfAnalystOpinions', 'Trailing_EPS_EarningsPerShare', 'verdict_whole_period', 'probability_to_drop_over_40', 'ma_buy_now_10_50_decisions', 'ma_buy_now_5_10_decisions', 'latest_ma_50', 'latest_ma_10', 'latest_ma_5', 'latest_Close']
-        final_list = [headers]
         print(f'gathering data for {len(self.tickers_list)} tickers')
         
         # reading the ranking page to clear it up
@@ -109,6 +108,13 @@ class RankingClass():
                       "values": rank_clear_up_range}]
         }).execute()
         
+        # заполнение "шапки"
+        results = self.service.spreadsheets().values().batchUpdate(spreadsheetId=self.ranking_page, body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [{"range": "Update",
+                      "majorDimension": "ROWS",
+                      "values": [headers]}]
+        }).execute()        
         
         for ticker in self.tickers_list:
             time.sleep(2)
