@@ -75,7 +75,15 @@ class RankingClass():
         latest_ma10 = round(listed_values[-1][-7], 2)
         latest_ma50 = round(listed_values[-1][-8], 2)
         stock_list_data = [verdict_whole_period, round(prob_to_drop_over_40 * 100, 2), round(buy_now_10_50__decision, 2), round(buy_now_5_10__decision, 2), latest_ma50, latest_ma10, latest_ma5, latest_close_price]
-        return stock_list_data
+        checked_stock_list_data = []
+        check_list = [None, 'N/A', 'Nan']
+        for i in stock_list_data:
+            if i in check_list:
+                i = 0
+                checked_stock_list_data.append(i)
+            else: checked_stock_list_data.append(i)
+            
+        return checked_stock_list_data
 
 
     # stock_market fundamental data from yfinance
