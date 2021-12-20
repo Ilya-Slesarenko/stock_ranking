@@ -91,7 +91,7 @@ class RankingClass():
         final_list = [headers]
         print(f'gathering data for {len(self.tickers_list)} tickers')
 
-        for ticker in self.tickers_list:
+        for ticker in self.tickers_list[:10]:
             from_yfinance = self.yfinance_data(ticker)
             try:
                 t_info = yf.Ticker(ticker).info
@@ -222,7 +222,8 @@ class RankingClass():
                 print(f'Exception at yf getting data, might be TypeError etc.')
                 pass
 
-
+        print(f'final list: {final_list}')
+        
         # reading the ranking page to clear it up
         results_rank = self.service.spreadsheets().values().batchGet(spreadsheetId=self.ranking_page, ranges='A:AE', valueRenderOption='FORMATTED_VALUE', dateTimeRenderOption='FORMATTED_STRING').execute()
         rank_sheet_values = results_rank['valueRanges'][0]['values']
