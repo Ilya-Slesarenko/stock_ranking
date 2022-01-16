@@ -128,137 +128,141 @@ class RankingClass():
             serv_e = apiclient.discovery.build('sheets', 'v4', http=http_Auth)
 
             for ticker in chunk:
-                from_yfinance = self.yfinance_data(ticker)
                 try:
-                    t_info = yf.Ticker(ticker).info
-
+                    from_yfinance = self.yfinance_data(ticker)
                     try:
-                        company_name = t_info.get('shortName')
-                    except TypeError:
-                        company_name = None
+                        t_info = yf.Ticker(ticker).info
 
-                    try:
-                        sector = t_info.get('sector')
-                    except TypeError:
-                        sector = None
+                        try:
+                            company_name = t_info.get('shortName')
+                        except TypeError:
+                            company_name = None
 
-                    try:
-                        country = t_info.get('country')
-                    except TypeError:
-                        country = None
+                        try:
+                            sector = t_info.get('sector')
+                        except TypeError:
+                            sector = None
 
-                    try:
-                        m_cap = round(t_info.get('marketCap') / 1000000, 2)
-                    except TypeError:
-                        m_cap = None
+                        try:
+                            country = t_info.get('country')
+                        except TypeError:
+                            country = None
 
-                    try:
-                        enterp_val = round(t_info.get('enterpriseValue') / 1000000, 2)
-                    except TypeError:
-                        enterp_val = None
+                        try:
+                            m_cap = round(t_info.get('marketCap') / 1000000, 2)
+                        except TypeError:
+                            m_cap = None
 
-                    try:
-                        P_S_12_m = round(t_info.get('priceToSalesTrailing12Months'), 2)
-                    except TypeError:
-                        P_S_12_m = None
+                        try:
+                            enterp_val = round(t_info.get('enterpriseValue') / 1000000, 2)
+                        except TypeError:
+                            enterp_val = None
 
-                    try:
-                        P_B = round(t_info.get('priceToBook'), 2)
-                    except TypeError:
-                        P_B = None
+                        try:
+                            P_S_12_m = round(t_info.get('priceToSalesTrailing12Months'), 2)
+                        except TypeError:
+                            P_S_12_m = None
 
-                    try:
-                        marg = round(t_info.get('profitMargins'), 3)
-                    except TypeError:
-                        marg = None
+                        try:
+                            P_B = round(t_info.get('priceToBook'), 2)
+                        except TypeError:
+                            P_B = None
 
-                    try:
-                        enterprToRev = t_info.get('enterpriseToRevenue')
-                    except TypeError:
-                        enterprToRev = None
+                        try:
+                            marg = round(t_info.get('profitMargins'), 3)
+                        except TypeError:
+                            marg = None
 
-                    try:
-                        enterprToEbitda = t_info.get('enterpriseToEbitda')
-                    except TypeError:
-                        enterprToEbitda = None
+                        try:
+                            enterprToRev = t_info.get('enterpriseToRevenue')
+                        except TypeError:
+                            enterprToRev = None
 
-                    try:
-                        yr_div = round(t_info.get('trailingAnnualDividendYield'), 3) if t_info.get('trailingAnnualDividendYield') is not None else 0
-                    except TypeError:
-                        yr_div = None
+                        try:
+                            enterprToEbitda = t_info.get('enterpriseToEbitda')
+                        except TypeError:
+                            enterprToEbitda = None
 
-                    try:
-                        exDivDate = datetime.fromtimestamp(t_info.get('exDividendDate'))
-                    except TypeError:
-                        exDivDate = None
+                        try:
+                            yr_div = round(t_info.get('trailingAnnualDividendYield'), 3) if t_info.get('trailingAnnualDividendYield') is not None else 0
+                        except TypeError:
+                            yr_div = None
 
-                    try:
-                        five_yr_div_yield = t_info.get('fiveYearAvgDividendYield') if t_info.get('fiveYearAvgDividendYield') is not None else 0
-                    except TypeError:
-                        five_yr_div_yield = None
+                        try:
+                            exDivDate = datetime.fromtimestamp(t_info.get('exDividendDate'))
+                        except TypeError:
+                            exDivDate = None
 
-                    try:
-                        div_date = exDivDate.strftime('%d.%m.%y')
-                    except AttributeError:
-                        div_date = 'Без дивидендов'
+                        try:
+                            five_yr_div_yield = t_info.get('fiveYearAvgDividendYield') if t_info.get('fiveYearAvgDividendYield') is not None else 0
+                        except TypeError:
+                            five_yr_div_yield = None
 
-                    try:
-                        FreeCashFlow = t_info.get('freeCashflow') if t_info.get('freeCashflow') is not None else 0
-                    except TypeError:
-                        FreeCashFlow = None
+                        try:
+                            div_date = exDivDate.strftime('%d.%m.%y')
+                        except AttributeError:
+                            div_date = 'Без дивидендов'
 
-                    try:
-                        DebtToEquity = t_info.get('debtToEquity') if t_info.get('debtToEquity') is not None else 0
-                    except TypeError:
-                        DebtToEquity = None
+                        try:
+                            FreeCashFlow = t_info.get('freeCashflow') if t_info.get('freeCashflow') is not None else 0
+                        except TypeError:
+                            FreeCashFlow = None
 
-                    try:
-                        ROA_ReturnOnAssets = t_info.get('returnOnAssets') if t_info.get('returnOnAssets') is not None else 0
-                    except TypeError:
-                        ROA_ReturnOnAssets = None
+                        try:
+                            DebtToEquity = t_info.get('debtToEquity') if t_info.get('debtToEquity') is not None else 0
+                        except TypeError:
+                            DebtToEquity = None
 
-                    try:
-                        EBITDA = t_info.get('ebitda') if t_info.get('ebitda') is not None else 0
-                    except TypeError:
-                        EBITDA = None
+                        try:
+                            ROA_ReturnOnAssets = t_info.get('returnOnAssets') if t_info.get('returnOnAssets') is not None else 0
+                        except TypeError:
+                            ROA_ReturnOnAssets = None
 
-                    try:
-                        TargetMedianPrice = t_info.get('targetMedianPrice') if t_info.get('targetMedianPrice') is not None else 0
-                    except TypeError:
-                        TargetMedianPrice = None
+                        try:
+                            EBITDA = t_info.get('ebitda') if t_info.get('ebitda') is not None else 0
+                        except TypeError:
+                            EBITDA = None
 
-                    try:
-                        NumberOfAnalystOpinions = t_info.get('numberOfAnalystOpinions') if t_info.get('numberOfAnalystOpinions') is not None else 0
-                    except TypeError:
-                        NumberOfAnalystOpinions = None
+                        try:
+                            TargetMedianPrice = t_info.get('targetMedianPrice') if t_info.get('targetMedianPrice') is not None else 0
+                        except TypeError:
+                            TargetMedianPrice = None
 
-                    try:
-                        Trailing_EPS_EarningsPerShare = t_info.get('trailingEps') if t_info.get('trailingEps') is not None else 0
-                    except TypeError:
-                        Trailing_EPS_EarningsPerShare = None
+                        try:
+                            NumberOfAnalystOpinions = t_info.get('numberOfAnalystOpinions') if t_info.get('numberOfAnalystOpinions') is not None else 0
+                        except TypeError:
+                            NumberOfAnalystOpinions = None
 
-                    latest_close = from_yfinance[-1]
+                        try:
+                            Trailing_EPS_EarningsPerShare = t_info.get('trailingEps') if t_info.get('trailingEps') is not None else 0
+                        except TypeError:
+                            Trailing_EPS_EarningsPerShare = None
 
-                    try:
-                        P_E = round((latest_close / Trailing_EPS_EarningsPerShare), 2)
-                    except ZeroDivisionError:
-                        P_E = 0
+                        latest_close = from_yfinance[-1]
 
-                    final_text = [[str(date.today()), ticker, company_name, sector, country, m_cap, enterp_val, P_S_12_m, P_E, P_B, marg, enterprToRev, enterprToEbitda, yr_div, five_yr_div_yield, div_date, FreeCashFlow, DebtToEquity, ROA_ReturnOnAssets, EBITDA, TargetMedianPrice, NumberOfAnalystOpinions, Trailing_EPS_EarningsPerShare] + from_yfinance]
-                    # заполнение
-                    resource = {"majorDimension": "ROWS", "values": final_text}
-                    range = "Update!A:AE";
-                    serv_e.spreadsheets().values().append(
-                        spreadsheetId=self.ranking_page,
-                        range=range,
-                        body=resource,
-                        valueInputOption="USER_ENTERED"
-                    ).execute()
+                        try:
+                            P_E = round((latest_close / Trailing_EPS_EarningsPerShare), 2)
+                        except ZeroDivisionError:
+                            P_E = 0
 
-                    print(f'Done for: {ticker}, {self.tickers_list.index(ticker) + 1} out of {len(self.tickers_list)}, chunk: {self.chunks_list.index(chunk) + 1}')
+                        final_text = [[str(date.today()), ticker, company_name, sector, country, m_cap, enterp_val, P_S_12_m, P_E, P_B, marg, enterprToRev, enterprToEbitda, yr_div, five_yr_div_yield, div_date, FreeCashFlow, DebtToEquity, ROA_ReturnOnAssets, EBITDA, TargetMedianPrice, NumberOfAnalystOpinions, Trailing_EPS_EarningsPerShare] + from_yfinance]
+                        # заполнение
+                        resource = {"majorDimension": "ROWS", "values": final_text}
+                        range = "Update!A:AE";
+                        serv_e.spreadsheets().values().append(
+                            spreadsheetId=self.ranking_page,
+                            range=range,
+                            body=resource,
+                            valueInputOption="USER_ENTERED"
+                        ).execute()
 
+                        print(f'Done for: {ticker}, {self.tickers_list.index(ticker) + 1} out of {len(self.tickers_list)}, chunk: {self.chunks_list.index(chunk) + 1}')
+
+                    except:
+                        print(f'Exception at yf getting data, might be TypeError etc.')
+                        pass
                 except:
-                    print(f'Exception at yf getting data, might be TypeError etc.')
+                    print(f'Exception at technical data parsing, probably this is a new stock with no data yet or similar issue.')
                     pass
 
         print(f'Done at all!')
