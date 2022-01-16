@@ -7,5 +7,5 @@ def job_function():
     RankingClass().spreadsheet_forming()
 
 shed = BlockingScheduler(timezone="Europe/Moscow")
-shed.add_job(job_function, 'cron', day_of_week='sun', hour=12, minute=25)  # 5 and 5, sun (Sunday)
+shed.add_job(job_function, 'cron', day_of_week='sun', hour=5, minute=5)  # 5 and 5, sun (Sunday)
 shed.start()
