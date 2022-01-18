@@ -35,27 +35,26 @@ class RankingClass():
             fixed_range.append(fixed_values)
 
         headers = results_rank_updated['valueRanges'][0]['values'][:1][0]
-
         df_1 = pd.DataFrame(fixed_range, columns=headers)
-        df_needed = df_1[['Time_key', 'latest_Close']].groupby(['Time_key']).sum()
+        df_needed = df_1[['Time_key', 'latest_Close']].groupby(['Time_key']).sum().reset_index()
         self.Sheet_filling(df_needed)
 
 
     def Sheet_filling(self, dataframe):
 
-        # working with the insiders deals page - first, reading the current data to clear them up
-        report_page = '1C_uAagRb_GV7tu8X1fbJIM9SRtH3bAcc-n61SP8muXg'
-        report_page_data = self.service.spreadsheets().values().batchGet(spreadsheetId=report_page,
-                                                                                 fields='w2w_change',
-                                                                                 ranges='A:B',
+        # first, reading the current data to clear them up
+        report_page = '11lzBveJVUSqtFJHLvy9Z3vcvqaBaFzuciFiHDAj0Nvg'
+        report_page_data = self.service.spreadsheets().values().get(spreadsheetId=report_page, range = 'w2w_change!A:B',
                                                                                  valueRenderOption='FORMATTED_VALUE',
                                                                                  dateTimeRenderOption='FORMATTED_STRING').execute()
-        rank_sheet_values = report_page_data['valueRanges'][0]['values']
-        rank_head = rank_sheet_values[0]
+
+        #report_page_df = pd.DataFrame(report_page_data.get("values")[1:], columns=report_page_data.get("values")[0])  # in case if the df type is needed in future
+        rank_sheet = report_page_data.get("values")
+        rank_head = report_page_data.get("values")[0]
 
         # clear_data
         rank_clear_up_range = []  # выбираем заполненные значения, определяем нулевую матрицу для обнуления страницы
-        for _ in rank_sheet_values:  # число строк с текущим заполнением
+        for _ in rank_sheet:  # число строк с текущим заполнением
             rank_clear_up_range.append([str('')] * len(rank_head))
 
         null_matrix = self.service.spreadsheets().values().batchUpdate(spreadsheetId=report_page, body={
@@ -65,10 +64,18 @@ class RankingClass():
                       "values": rank_clear_up_range}]
         }).execute()
 
+        # making appropriate range from the new dataframe
+        new_data = dataframe.values.tolist()
+        new_d = [dataframe.columns.values.tolist()]
+        for i in new_data:
+            new_d.append(i)
+
         # заполнение новыми данными
         results = self.service.spreadsheets().values().batchUpdate(spreadsheetId=report_page, body={
             "valueInputOption": "USER_ENTERED",
             "data": [{"range": "w2w_change",
                       "majorDimension": "ROWS",
-                      "values": dataframe}]
+                      "values": new_d}]
         }).execute()
+
+        print(f' Done, we\'re all set!')
