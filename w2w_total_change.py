@@ -46,7 +46,8 @@ class RankingClass():
         # working with the insiders deals page - first, reading the current data to clear them up
         report_page = '1C_uAagRb_GV7tu8X1fbJIM9SRtH3bAcc-n61SP8muXg'
         report_page_data = self.service.spreadsheets().values().batchGet(spreadsheetId=report_page,
-                                                                                 ranges='w2w_change!A:B',
+                                                                                 fields='w2w_change',
+                                                                                 ranges='A:B',
                                                                                  valueRenderOption='FORMATTED_VALUE',
                                                                                  dateTimeRenderOption='FORMATTED_STRING').execute()
         rank_sheet_values = report_page_data['valueRanges'][0]['values']
