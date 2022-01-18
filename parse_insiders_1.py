@@ -110,7 +110,7 @@ class InsidersDeals():
                 root = ET.fromstring(xml)
                 return root
             except:
-                print(f'xml can\'t be given, check matches: {matches}')
+                print(f'xml can\'t be given, check matches...')
                 root = None
                 return root
 
