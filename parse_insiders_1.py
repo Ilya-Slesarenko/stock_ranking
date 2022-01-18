@@ -101,18 +101,15 @@ class InsidersDeals():
             # decode the response into a string
             try:
                 data = response.read().decode('utf-8')
-            except:
-                data = None
-            # set up the regular expression extractoer in order to get the relevant part of the filing
-            matcher = re.compile('<\?xml.*ownershipDocument>', flags=re.MULTILINE|re.DOTALL)
-            matches = matcher.search(data)
-            # the first matching group is the extracted XML of interest
-            try:
+                # set up the regular expression extractoer in order to get the relevant part of the filing
+                matcher = re.compile('<\?xml.*ownershipDocument>', flags=re.MULTILINE|re.DOTALL)
+                matches = matcher.search(data)
+                # the first matching group is the extracted XML of interest
                 xml = matches.group(0)
                 # instantiate the XML object
                 root = ET.fromstring(xml)
                 return root
-            except AttributeError:
+            except:
                 print(f'xml can\'t be given, check matches: {matches}')
                 root = None
                 return root
