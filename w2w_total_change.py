@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import logging, random, warnings, httplib2, apiclient.discovery
+import warnings, httplib2, apiclient.discovery
 import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -38,11 +38,40 @@ class RankingClass():
 
         df_1 = pd.DataFrame(fixed_range, columns=headers)
         df_needed = df_1[['Time_key', 'latest_Close']].groupby(['Time_key']).sum()
+        self.Sheet_filling(df_needed)
 
-        output_dir = f'C:\\Users\\Ilia\\Documents\\Python_projects\\Stock_analysis\\baseline_analysis\\stock_rank\\w2w_trends.xlsx'
-        writer = pd.ExcelWriter(output_dir, engine='xlsxwriter')
-        df_needed.to_excel(writer, sheet_name='result', index=True)
-        writer.save()
+
+    def Sheet_filling(self, dataframe):
+
+        # working with the insiders deals page - first, reading the current data to clear them up
+        report_page = '1C_uAagRb_GV7tu8X1fbJIM9SRtH3bAcc-n61SP8muXg'
+        report_page_data = self.service.spreadsheets().values().batchGet(spreadsheetId=report_page,
+                                                                                 ranges='w2w_change!A:I',
+                                                                                 valueRenderOption='FORMATTED_VALUE',
+                                                                                 dateTimeRenderOption='FORMATTED_STRING').execute()
+        rank_sheet_values = report_page_data['valueRanges'][0]['values']
+        rank_head = rank_sheet_values[0]
+
+        # clear_data
+        rank_clear_up_range = []  # выбираем заполненные значения, определяем нулевую матрицу для обнуления страницы
+        for _ in rank_sheet_values:  # число строк с текущим заполнением
+            rank_clear_up_range.append([str('')] * len(rank_head))
+
+        null_matrix = self.service.spreadsheets().values().batchUpdate(spreadsheetId=report_page, body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [{"range": "w2w_change",
+                      "majorDimension": "ROWS",
+                      "values": rank_clear_up_range}]
+        }).execute()
+
+        # заполнение новыми данными
+        results = self.service.spreadsheets().values().batchUpdate(spreadsheetId=report_page, body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [{"range": "w2w_change",
+                      "majorDimension": "ROWS",
+                      "values": dataframe}]
+        }).execute()
+
 
 if __name__ == '__main__':
     RankingClass().total_change_calc()
