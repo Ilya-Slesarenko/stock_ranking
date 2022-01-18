@@ -225,7 +225,3 @@ class InsidersDeals():
 
         self.Sheet_filling(val_df_3)
         print(f'We\'re all set!')
-
-
-if __name__ == '__main__':
-    InsidersDeals().PerformAll()
