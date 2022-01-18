@@ -174,7 +174,12 @@ class InsidersDeals():
 
     def ConvertBeforeSaving(self):
         # Running the function prints the URL of each filing fetched
-        returned_filings = self.add_non_derivative_transaction_amounts()
+        
+        try:
+            returned_filings = self.add_non_derivative_transaction_amounts()
+        except:
+            returned_filings = None
+        
         filings_final = json_normalize(returned_filings) #making dataframe, clear and understood
         # headers = filings_final.columns.values.tolist()  # ['id', 'accessionNo', 'cik', 'ticker', 'companyName', 'formType', 'description', 'filedAt', 'linkToTxt', 'linkToHtml', 'linkToXbrl', 'linkToFilingDetails', 'entities', 'documentFormatFiles', 'dataFiles', 'seriesAndClassesContracts', 'Information', 'periodOfReport', 'effectivenessDate', 'nonDerivativeTransactions', 'owner']
         values = filings_final.values.tolist()
