@@ -2,7 +2,7 @@
 
 import xml.etree.ElementTree as ET
 import re, time, json, urllib, urllib.request, ast, httplib2, apiclient.discovery
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 from datetime import date, timedelta
 import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
