@@ -18,7 +18,9 @@ class InsidersDeals():
         # Получение списка акций  из готового листа Google Sheet для проверки (не брать то, что все равно не сможем оценить и купить!
         self.CREDENTIALS_FILE = 'stock-spreadsheets-9974a749b7e4.json'
         tickers_page = '1s6uIbhIX4IYCmFYhfWgEklFqtLX95ky7GmJNRvVexeM'
+        self.ranking_page = '1C_uAagRb_GV7tu8X1fbJIM9SRtH3bAcc-n61SP8muXg'
         credentials = ServiceAccountCredentials.from_json_keyfile_name(self.CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'])
+        #credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'])
         httpAuth = credentials.authorize(httplib2.Http())  # Авторизуемся в системе
         self.service = apiclient.discovery.build('sheets', 'v4', http=httpAuth)  # Выбираем работу с таблицами и 4 версию API
 
@@ -111,6 +113,14 @@ class InsidersDeals():
                 return root
 
 
+    def Get_Spreadsheet_Data(self):
+        results_rank = self.service.spreadsheets().values().batchGet(spreadsheetId=self.ranking_page, ranges='A:AE', valueRenderOption='FORMATTED_VALUE', dateTimeRenderOption='FORMATTED_STRING').execute()
+        #results_rank = service.spreadsheets().values().batchGet(spreadsheetId=ranking_page, ranges='A:AE', valueRenderOption='FORMATTED_VALUE', dateTimeRenderOption='FORMATTED_STRING').execute()
+        rank_sheet_values = results_rank['valueRanges'][0]['values']
+
+        return rank_sheet_values
+
+
     # Calculate the total transaction amount in $ of a giving form 4 in XML
     def calculate_transaction_amount(self, xml):
         total = 0
@@ -170,17 +180,16 @@ class InsidersDeals():
         checklist = [None, 0, '']
         final_list = []
         for i in values:
-            declare_id = i[0]
-            central_index_key = i[2]
-            declare_date = i[8]
+            declare_date = i[8][:10]
             period_of_report = i[-4]
             ticker = i[3]
             company_name = i[4]
             amount = i[-2]
+            module_amount = amount*-1 if amount <0 else amount
             owner = i[-1]
             link_to_txt = i[9]
             if ticker not in checklist and amount not in checklist and ticker in self.yf_working_tickers_list:
-                final_list.append([declare_date, period_of_report, declare_id, central_index_key, ticker, company_name, amount, link_to_txt, owner])
+                final_list.append([declare_date, period_of_report, ticker, company_name, amount, link_to_txt, owner, module_amount])
             else:
                 pass
 
@@ -191,37 +200,56 @@ class InsidersDeals():
 
         # working with the insiders deals page - first, reading the current data to clear them up
         insiders_deals_page = '12Ns23Wih3YMKH6hACyjPB5TV46dLcAs8LvbmYUeC3Ks'
-        insiders_deals_page_data = self.service.spreadsheets().values().batchGet(spreadsheetId=insiders_deals_page, ranges='Update!A:I',
-                                                                     valueRenderOption='FORMATTED_VALUE',
-                                                                     dateTimeRenderOption='FORMATTED_STRING').execute()
-        rank_sheet_values = insiders_deals_page_data['valueRanges'][0]['values']
-        rank_head = rank_sheet_values[0]
+        report_page_data = self.service.spreadsheets().values().get(spreadsheetId=insiders_deals_page, range='Update!A:I',
+                                                                    valueRenderOption='FORMATTED_VALUE',
+                                                                    dateTimeRenderOption='FORMATTED_STRING').execute()
+
+        # report_page_df = pd.DataFrame(report_page_data.get("values")[1:], columns=report_page_data.get("values")[0])  # in case if the df type is needed in future
+        sheet_data = report_page_data.get("values")
+        headers = report_page_data.get("values")[0]
 
         # clear_data
-        rank_clear_up_range = []  # выбираем заполненные значения, определяем нулевую матрицу для обнуления страницы
-        for _ in rank_sheet_values:  # число строк с текущим заполнением
-            rank_clear_up_range.append([str('')] * len(rank_head))
+        clear_up_range = []  # выбираем заполненные значения, определяем нулевую матрицу для обнуления страницы
+        for _ in sheet_data:  # число строк с текущим заполнением
+            clear_up_range.append([str('')] * len(headers))
 
         null_matrix = self.service.spreadsheets().values().batchUpdate(spreadsheetId=insiders_deals_page, body={
             "valueInputOption": "USER_ENTERED",
             "data": [{"range": "Update",
                       "majorDimension": "ROWS",
-                      "values": rank_clear_up_range}]
+                      "values": clear_up_range}]
         }).execute()
+
+        # making appropriate range from the new dataframe
+        new_data = dataframe.values.tolist()
+        new_d = [dataframe.columns.values.tolist()]
+        for i in new_data:
+            new_d.append(i)
 
         # заполнение новыми данными
         results = self.service.spreadsheets().values().batchUpdate(spreadsheetId=insiders_deals_page, body={
             "valueInputOption": "USER_ENTERED",
             "data": [{"range": "Update",
                       "majorDimension": "ROWS",
-                      "values": dataframe}]
+                      "values": new_d}]
         }).execute()
 
-    def PerformAll(self):
-        list_headers = ['declare_date', 'period_of_report', 'declare_id', 'central_index_key', 'ticker', 'company_name', 'amount', 'linkToTxt', 'report_owner']
-        final_list = self.ConvertBeforeSaving()
-        val_df_2 = pd.DataFrame(final_list, columns=list_headers)
-        val_df_3 = val_df_2.set_index('declare_date')
 
-        self.Sheet_filling(val_df_3)
+    def PerformAll(self):
+        list_headers = ['declare_date', 'period_of_report', 'ticker', 'company_name', 'amount', 'linkToTxt', 'report_owner', 'module_amount', 'Share_of_Total_Cap']
+        final_list = self.ConvertBeforeSaving()
+
+        check_comp_values = self.Get_Spreadsheet_Data()
+        tickers_capitals_dict = {}  # словарь тикер - капитал компании
+        for i in check_comp_values:
+            tickers_capitals_dict[i[1]] = i[5]
+
+        for c in final_list: # adding the capitals values to each row
+            cap = int(tickers_capitals_dict.get(c[2]).split(',')[0]) *1000000
+            share = f'{round(int(c[4])/cap *100 ,3)}%'
+            c.append(share)
+
+        val_df_2 = pd.DataFrame(final_list, columns=list_headers).sort_values(by=['module_amount'], ascending=False).drop(columns=['module_amount'])
+
+        self.Sheet_filling(val_df_2)
         print(f'We\'re all set!')
