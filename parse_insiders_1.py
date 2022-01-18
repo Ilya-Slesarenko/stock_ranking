@@ -187,17 +187,43 @@ class InsidersDeals():
         return final_list
 
 
+    def Sheet_filling(self, dataframe, headers):
+
+        # working with the insiders deals page - first, reading the current data to clear them up
+        insiders_deals_page = '12Ns23Wih3YMKH6hACyjPB5TV46dLcAs8LvbmYUeC3Ks'
+        insiders_deals_page_data = self.service.spreadsheets().values().batchGet(spreadsheetId=insiders_deals_page, ranges='A:I',
+                                                                     valueRenderOption='FORMATTED_VALUE',
+                                                                     dateTimeRenderOption='FORMATTED_STRING').execute()
+        rank_sheet_values = insiders_deals_page_data['valueRanges'][0]['values']
+        rank_head = rank_sheet_values[0]
+
+        # clear_data
+        rank_clear_up_range = []  # выбираем заполненные значения, определяем нулевую матрицу для обнуления страницы
+        for _ in rank_sheet_values:  # число строк с текущим заполнением
+            rank_clear_up_range.append([str('')] * len(rank_head))
+
+        null_matrix = self.service.spreadsheets().values().batchUpdate(spreadsheetId=insiders_deals_page, body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [{"range": "Update",
+                      "majorDimension": "ROWS",
+                      "values": rank_clear_up_range}]
+        }).execute()
+
+        # заполнение новыми данными
+        results = self.service.spreadsheets().values().batchUpdate(spreadsheetId=insiders_deals_page, body={
+            "valueInputOption": "USER_ENTERED",
+            "data": [{"range": "Update",
+                      "majorDimension": "ROWS",
+                      "values": dataframe}]
+        }).execute()
+
     def PerformAll(self):
         list_headers = ['declare_date', 'period_of_report', 'declare_id', 'central_index_key', 'ticker', 'company_name', 'amount', 'linkToTxt', 'report_owner']
         final_list = self.ConvertBeforeSaving()
         val_df_2 = pd.DataFrame(final_list, columns=list_headers)
         val_df_3 = val_df_2.set_index('declare_date')
 
-        temp_output_dir = 'C:\\Users\\Ilia\Documents\\Python_projects\\Stock_analysis\\Insider_trading\\output.xlsx'
-        writer = pd.ExcelWriter(temp_output_dir, engine='xlsxwriter')
-        val_df_3.to_excel(writer, sheet_name='result', index=True)
-        writer.save()
-
+        self.Sheet_filling(val_df_3, list_headers)
         print(f'We\'re all set!')
 
 
