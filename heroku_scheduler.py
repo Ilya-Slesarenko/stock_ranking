@@ -6,15 +6,16 @@ from parse_insiders_1 import InsidersDeals
 
 shed = BlockingScheduler(timezone="Europe/Moscow")
 
-# update_spreadsheet = RankingClass().spreadsheet_forming()
-def job_function():
-    print(f'gathering started... {str(datetime.datetime.now())}')
+def job_function_1():
     RankingClass().spreadsheet_forming()
-    
-w2w_job = RankingClass().total_change_calc()
-insiders_parse = InsidersDeals().PerformAll()
 
-shed.add_job(insiders_parse, 'cron', day_of_week='wed', hour=1, minute=28)  # 3 and 5, sun (Sunday)
-shed.add_job(job_function, 'cron', day_of_week='sun', hour=5, minute=5)  # 5 and 5, sun (Sunday)
-shed.add_job(w2w_job, 'cron', day_of_week='wed', hour=1, minute=31)  # set to !!! 8 and 5, sun (Sunday)
+def job_function_2():
+    RankingClass().total_change_calc()
+    
+def job_function_3():
+    InsidersDeals().PerformAll()
+
+shed.add_job(job_function_2, 'cron', day_of_week='wed', hour=1, minute=34)  # 3 and 5, sun (Sunday)
+shed.add_job(job_function_1, 'cron', day_of_week='sun', hour=5, minute=5)  # 5 and 5, sun (Sunday)
+shed.add_job(job_function_3, 'cron', day_of_week='wed', hour=1, minute=37)  # set to !!! 8 and 5, sun (Sunday)
 shed.start()
