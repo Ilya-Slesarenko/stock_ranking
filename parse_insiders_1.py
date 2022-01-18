@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import xml.etree.ElementTree as ET
 import re, time, json, urllib.request, ast, httplib2, apiclient.discovery
 from pandas.io.json import json_normalize
