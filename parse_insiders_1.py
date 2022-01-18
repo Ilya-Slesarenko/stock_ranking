@@ -16,7 +16,7 @@ class AppURLopener(urllib.request.FancyURLopener):
 
 class InsidersDeals():
     def __init__(self):
-
+        print('starting insiders parsing')
         # Получение списка акций  из готового листа Google Sheet для проверки (не брать то, что все равно не сможем оценить и купить!
         self.CREDENTIALS_FILE = 'stock-spreadsheets-9974a749b7e4.json'
         tickers_page = '1s6uIbhIX4IYCmFYhfWgEklFqtLX95ky7GmJNRvVexeM'
