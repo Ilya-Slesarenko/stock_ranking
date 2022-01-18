@@ -187,7 +187,7 @@ class InsidersDeals():
         return final_list
 
 
-    def Sheet_filling(self, dataframe, headers):
+    def Sheet_filling(self, dataframe):
 
         # working with the insiders deals page - first, reading the current data to clear them up
         insiders_deals_page = '12Ns23Wih3YMKH6hACyjPB5TV46dLcAs8LvbmYUeC3Ks'
@@ -223,7 +223,7 @@ class InsidersDeals():
         val_df_2 = pd.DataFrame(final_list, columns=list_headers)
         val_df_3 = val_df_2.set_index('declare_date')
 
-        self.Sheet_filling(val_df_3, list_headers)
+        self.Sheet_filling(val_df_3)
         print(f'We\'re all set!')
 
 
