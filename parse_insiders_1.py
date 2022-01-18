@@ -99,7 +99,10 @@ class InsidersDeals():
                 download_xml(url, tries + 1)
         else:
             # decode the response into a string
-            data = response.read().decode('utf-8')
+            try:
+                data = response.read().decode('utf-8')
+            except:
+                data = None
             # set up the regular expression extractoer in order to get the relevant part of the filing
             matcher = re.compile('<\?xml.*ownershipDocument>', flags=re.MULTILINE|re.DOTALL)
             matches = matcher.search(data)
