@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as ET
-import re, time, json, urllib.request, ast, httplib2, apiclient.discovery
+import re, time, json, urllib, urllib.request, ast, httplib2, apiclient.discovery
 from pandas.io.json import json_normalize
 from datetime import date, timedelta
 import pandas as pd
@@ -91,7 +91,7 @@ class InsidersDeals():
     def download_xml(self, url):
         try:
             opener = AppURLopener()
-            response = opener.open(url)
+            response = opener.open(urllib.parse.unquote(url))
         except:
             print('Something went wrong. consider to use cycling trying')
             if tries < 5:
