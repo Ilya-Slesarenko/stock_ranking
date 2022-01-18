@@ -191,7 +191,7 @@ class InsidersDeals():
 
         # working with the insiders deals page - first, reading the current data to clear them up
         insiders_deals_page = '12Ns23Wih3YMKH6hACyjPB5TV46dLcAs8LvbmYUeC3Ks'
-        insiders_deals_page_data = self.service.spreadsheets().values().batchGet(spreadsheetId=insiders_deals_page, ranges='A:I',
+        insiders_deals_page_data = self.service.spreadsheets().values().batchGet(spreadsheetId=insiders_deals_page, ranges='Update!A:I',
                                                                      valueRenderOption='FORMATTED_VALUE',
                                                                      dateTimeRenderOption='FORMATTED_STRING').execute()
         rank_sheet_values = insiders_deals_page_data['valueRanges'][0]['values']
