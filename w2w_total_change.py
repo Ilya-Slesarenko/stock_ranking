@@ -71,7 +71,3 @@ class RankingClass():
                       "majorDimension": "ROWS",
                       "values": dataframe}]
         }).execute()
-
-
-if __name__ == '__main__':
-    RankingClass().total_change_calc()
