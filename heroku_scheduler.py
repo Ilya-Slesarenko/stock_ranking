@@ -15,5 +15,5 @@ shed = BlockingScheduler(timezone="Europe/Moscow")
 
 shed.add_job(insiders_parse, 'cron', day_of_week='sun', hour=3, minute=5)  # 3 and 5, sun (Sunday)
 shed.add_job(job_function, 'cron', day_of_week='sun', hour=5, minute=5)  # 5 and 5, sun (Sunday)
-shed.add_job(w2w_job, 'cron', day_of_week='tue', hour=17, minute=13)  # set to !!! 8 and 5, sun (Sunday)
+shed.add_job(w2w_job, 'cron', day_of_week='tue', hour=17, minute=17)  # set to !!! 8 and 5, sun (Sunday)
 shed.start()
