@@ -101,24 +101,24 @@ class InsidersDeals():
                 download_xml(url, tries + 1)
         else:
             # decode the response into a string
-            try:
-                data = response.read().decode('utf-8')
-                print(f'data is okay: {data}\n\n')
-                # set up the regular expression extractoer in order to get the relevant part of the filing
-                matcher = re.compile('<\?xml.*ownershipDocument>', flags=re.MULTILINE|re.DOTALL)
-                matches = matcher.search(data)
-                print(f'matcher is okay: {matcher}\n\n')
-                # the first matching group is the extracted XML of interest
-                xml = matches.group(0)
-                print(f' xml is okay: {xml}\n\n')
-                # instantiate the XML object
-                root = ET.fromstring(xml)
-                print(f'root is okay: {root}\n\n')
-                return root
-            except:
-                print(f'xml can\'t be given, check matches...')
-                root = None
-                return root
+            # try:
+            data = response.read().decode('utf-8')
+            print(f'data is okay: {data}\n\n')
+            # set up the regular expression extractoer in order to get the relevant part of the filing
+            matcher = re.compile('<\?xml.*ownershipDocument>', flags=re.MULTILINE|re.DOTALL)
+            matches = matcher.search(data)
+            print(f'matcher is okay: {matcher}\n\n')
+            # the first matching group is the extracted XML of interest
+            xml = matches.group(0)
+            print(f' xml is okay: {xml}\n\n')
+            # instantiate the XML object
+            root = ET.fromstring(xml)
+            print(f'root is okay: {root}\n\n')
+            return root
+            #except:
+            #print(f'xml can\'t be given, check matches...')
+            #root = None
+            #return root
 
 
     def Get_Spreadsheet_Data(self):
