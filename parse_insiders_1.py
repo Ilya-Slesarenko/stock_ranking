@@ -169,9 +169,9 @@ class InsidersDeals():
         for filing in filings:
             try:
                 url = filing['linkToTxt']
-                print('url: {url}')
+                print(f'url: {url}')
                 xml = self.download_xml(url)
-                print('xml: {xml}')
+                print(f'xml: {xml}')
                 nonDerivativeTransactions = self.calculate_transaction_amount(xml)
                 filing['nonDerivativeTransactions'] = nonDerivativeTransactions
                 filing['rep_owner'] = self.find_owner(xml)
