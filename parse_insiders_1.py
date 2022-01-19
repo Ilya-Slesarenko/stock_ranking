@@ -74,6 +74,7 @@ class InsidersDeals():
 
     # this is for testing ONLY!!!
     def compress_filings(self, filings):
+        print('in compress_filings')
         store = {}
         compressed_filings = []
         for filing in filings:
@@ -89,6 +90,7 @@ class InsidersDeals():
 
     # Download the XML version of the filing. If it fails wait for 5, 10, 15, ... seconds and try again.
     def download_xml(self, url):
+        print(' in download_xml')
         opener = AppURLopener()
         print(f'opener is okay: {opener}\n')
         response = opener.open(urllib.parse.unquote(url))
@@ -112,6 +114,7 @@ class InsidersDeals():
 
 
     def Get_Spreadsheet_Data(self):
+        print('in Get_Spreadsheet_Data')
         results_rank = self.service.spreadsheets().values().batchGet(spreadsheetId=self.ranking_page, ranges='A:AE', valueRenderOption='FORMATTED_VALUE', dateTimeRenderOption='FORMATTED_STRING').execute()
         #results_rank = service.spreadsheets().values().batchGet(spreadsheetId=ranking_page, ranges='A:AE', valueRenderOption='FORMATTED_VALUE', dateTimeRenderOption='FORMATTED_STRING').execute()
         rank_sheet_values = results_rank['valueRanges'][0]['values']
@@ -121,6 +124,7 @@ class InsidersDeals():
 
     # Calculate the total transaction amount in $ of a giving form 4 in XML
     def calculate_transaction_amount(self, xml):
+        print('in calculate_transaction_amount')
         total = 0
         if xml is None:
             return total
@@ -143,6 +147,7 @@ class InsidersDeals():
 
     # Take some other data form 4 in XML
     def find_owner(self, xml):
+        print('in find_owner')
         report_owner = 'N/A'
         if xml is None:
             return report_owner
@@ -157,6 +162,7 @@ class InsidersDeals():
     # Calculate the total transaction amount per filing
     # Save the calculate transaction value to the filing dict with key 'nonDerivativeTransactions'
     def add_non_derivative_transaction_amounts(self):
+        print(' in add_non_derivative_transaction_amounts')
         filings = self.compress_filings(self.filingsJson['filings'])
         print(f'filings - in add_non_derivative_transaction_amounts: {type(filings)}, {filings[0]}, {filings[-1]}, {len(filings)} \n\n')
         for filing in filings:
@@ -174,6 +180,7 @@ class InsidersDeals():
 
 
     def ConvertBeforeSaving(self):
+        print('in ConvertBeforeSaving')
         # Running the function prints the URL of each filing fetched
         returned_filings = self.add_non_derivative_transaction_amounts()
         
@@ -201,6 +208,7 @@ class InsidersDeals():
 
 
     def Sheet_filling(self, dataframe):
+        print('in Sheet_filling')
 
         # working with the insiders deals page - first, reading the current data to clear them up
         insiders_deals_page = '12Ns23Wih3YMKH6hACyjPB5TV46dLcAs8LvbmYUeC3Ks'
@@ -244,6 +252,7 @@ class InsidersDeals():
 
 
     def PerformAll(self):
+        print(' in PerformAll')
         list_headers = ['declare_date', 'period_of_report', 'ticker', 'company_name', 'amount', 'linkToTxt', 'report_owner', 'module_amount', 'Share_of_Total_Cap']
         final_list = self.ConvertBeforeSaving()
         print(f'final_list: {type(final_list)}, {final_list[0]}, {final_list[-1]}, {len(final_list)} \n\n')
