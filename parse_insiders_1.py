@@ -89,37 +89,26 @@ class InsidersDeals():
 
     # Download the XML version of the filing. If it fails wait for 5, 10, 15, ... seconds and try again.
     def download_xml(self, url):
-        try:
-            opener = AppURLopener()
-            print(f'opener is okay: {opener}\n')
-            response = urllib.request.urlopen(url)
-            # response = opener.open(urllib.parse.unquote(url))
-            print(f'response is okay: {response}\n\n')
-        except:
-            print('Something went wrong. consider to use cycling trying')
-            if tries < 5:
-                time.sleep(5 * tries)
-                download_xml(url, tries + 1)
-        else:
-            # decode the response into a string
-            # try:
-            data = response.read().decode('utf-8')
-            print(f'data is okay: {data}\n\n')
-            # set up the regular expression extractoer in order to get the relevant part of the filing
-            matcher = re.compile('<\?xml.*ownershipDocument>', flags=re.MULTILINE|re.DOTALL)
-            matches = matcher.search(data)
-            print(f'matcher is okay: {matcher}\n\n')
-            # the first matching group is the extracted XML of interest
-            xml = matches.group(0)
-            print(f' xml is okay: {xml}\n\n')
-            # instantiate the XML object
-            root = ET.fromstring(xml)
-            print(f'root is okay: {root}\n\n')
-            return root
-            #except:
-            #print(f'xml can\'t be given, check matches...')
-            #root = None
-            #return root
+        opener = AppURLopener()
+        print(f'opener is okay: {opener}\n')
+        response = opener.open(urllib.parse.unquote(url))
+        print(f'response is okay: {response}\n\n')
+
+        # decode the response into a string
+        data = response.read().decode('utf-8')
+        print(f'data is okay: {data}\n\n')
+        # set up the regular expression extractoer in order to get the relevant part of the filing
+        matcher = re.compile('<\?xml.*ownershipDocument>', flags=re.MULTILINE|re.DOTALL)
+        matches = matcher.search(data)
+        print(f'matcher is okay: {matcher}\n\n')
+        # the first matching group is the extracted XML of interest
+        xml = matches.group(0)
+        print(f' xml is okay: {xml}\n\n')
+        # instantiate the XML object
+        root = ET.fromstring(xml)
+        print(f'root is okay: {root}\n\n')
+        
+        return root
 
 
     def Get_Spreadsheet_Data(self):
