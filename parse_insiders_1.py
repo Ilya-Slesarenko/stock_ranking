@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as ET
-import re, time, json, urllib, urllib.request, ast, httplib2, apiclient.discovery
+import re, time, json, urllib.request, ast, httplib2, apiclient.discovery
 from pandas import json_normalize
 from datetime import date, timedelta
 import pandas as pd
@@ -162,6 +162,7 @@ class InsidersDeals():
     # Save the calculate transaction value to the filing dict with key 'nonDerivativeTransactions'
     def add_non_derivative_transaction_amounts(self):
         filings = self.compress_filings(self.filingsJson['filings'])
+        print(f'filings - in add_non_derivative_transaction_amounts: {type(filings)}, {filings[0]}, {filings[-1]}, {len(filings)} \n\n')
         for filing in filings:
             try:
                 url = filing['linkToTxt']
@@ -169,7 +170,8 @@ class InsidersDeals():
                 nonDerivativeTransactions = self.calculate_transaction_amount(xml)
                 filing['nonDerivativeTransactions'] = nonDerivativeTransactions
                 filing['rep_owner'] = self.find_owner(xml)
-                print(f'Done for: {filings.index(filing)} out of {len(filings)}')
+                print(f'Done for: {filings.index(filing)} out of {len(filings)}\n\n')
+                print(f'upadted filing - in add_non_derivative_transaction_amounts: {type(filing)}, {filing[0]}, {filing[-1]}, {len(filing)} \n\n')
             except:
                 pass
         return filings
