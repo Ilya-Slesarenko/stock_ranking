@@ -163,12 +163,15 @@ class InsidersDeals():
     def add_non_derivative_transaction_amounts(self):
         filings = self.compress_filings(self.filingsJson['filings'])
         for filing in filings:
-            url = filing['linkToTxt']
-            xml = self.download_xml(url)
-            nonDerivativeTransactions = self.calculate_transaction_amount(xml)
-            filing['nonDerivativeTransactions'] = nonDerivativeTransactions
-            filing['rep_owner'] = self.find_owner(xml)
-            print(f'Done for: {filings.index(filing)} out of {len(filings)}')
+            try:
+                url = filing['linkToTxt']
+                xml = self.download_xml(url)
+                nonDerivativeTransactions = self.calculate_transaction_amount(xml)
+                filing['nonDerivativeTransactions'] = nonDerivativeTransactions
+                filing['rep_owner'] = self.find_owner(xml)
+                print(f'Done for: {filings.index(filing)} out of {len(filings)}')
+            except:
+                pass
         return filings
 
 
