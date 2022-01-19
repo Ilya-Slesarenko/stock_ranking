@@ -17,5 +17,5 @@ def job_function_3():
 
 shed.add_job(job_function_1, 'cron', day_of_week='sun', hour=2, minute=5)  # sun (Sunday night)
 shed.add_job(job_function_2, 'cron', day_of_week='sun', hour=5, minute=50)  # sun (Sunday - Monday morning)
-shed.add_job(job_function_3, 'cron', day_of_week='wed', hour=16, minute=21)  # set to !!! 8 and 5, sun (Sunday)
+shed.add_job(job_function_3, 'cron', day_of_week='wed', hour=16, minute=24)  # set to !!! 8 and 5, sun (Sunday)
 shed.start()
