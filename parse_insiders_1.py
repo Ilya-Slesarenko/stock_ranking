@@ -92,7 +92,8 @@ class InsidersDeals():
         try:
             opener = AppURLopener()
             print(f'opener is okay: {opener}\n')
-            response = opener.open(urllib.parse.unquote(url))
+            response = urllib.request.urlopen(url)
+            # response = opener.open(urllib.parse.unquote(url))
             print(f'response is okay: {response}\n\n')
         except:
             print('Something went wrong. consider to use cycling trying')
