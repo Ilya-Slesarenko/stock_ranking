@@ -2,6 +2,7 @@
 
 import xml.etree.ElementTree as ET
 import re, time, json, urllib.request, ast, httplib2, apiclient.discovery
+from urllib.parse import unquote
 from pandas import json_normalize
 from datetime import date, timedelta
 import pandas as pd
@@ -93,11 +94,11 @@ class InsidersDeals():
         print(' in download_xml')
         opener = AppURLopener()
         print(f'opener is okay: {opener}\n')
-        response = opener.open(urllib.parse.unquote(url))
+        response = opener.open(unquote(url))
         print(f'response is okay: {response}\n\n')
-
+        
         # decode the response into a string
-        data = response.read().decode('utf-8')
+        data = response.read().decode('utf-8', errors="replace")
         print(f'data is okay: {data}\n\n')
         # set up the regular expression extractoer in order to get the relevant part of the filing
         matcher = re.compile('<\?xml.*ownershipDocument>', flags=re.MULTILINE|re.DOTALL)
@@ -164,11 +165,13 @@ class InsidersDeals():
     def add_non_derivative_transaction_amounts(self):
         print(' in add_non_derivative_transaction_amounts')
         filings = self.compress_filings(self.filingsJson['filings'])
-        print(f'filings - in add_non_derivative_transaction_amounts: {type(filings)}, {filings[0]}, {filings[-1]}, {len(filings)} \n\n')
+        print(f'filings - in add_non_derivative_transaction_amounts: {type(filings)}, {filings[0]}\n\n\n {filings[-1]}, {len(filings)} \n\n')
         for filing in filings:
             try:
                 url = filing['linkToTxt']
+                print('url': {url}')
                 xml = self.download_xml(url)
+                print('xml: {xml}')
                 nonDerivativeTransactions = self.calculate_transaction_amount(xml)
                 filing['nonDerivativeTransactions'] = nonDerivativeTransactions
                 filing['rep_owner'] = self.find_owner(xml)
