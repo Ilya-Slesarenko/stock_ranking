@@ -1,1 +1,1 @@
-worker: python heroku_scheduler.py
+worker: python heroku_scheduler.py --uri-encoding UTF-8
