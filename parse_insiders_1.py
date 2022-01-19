@@ -218,7 +218,9 @@ class InsidersDeals():
         clear_up_range = []  # выбираем заполненные значения, определяем нулевую матрицу для обнуления страницы
         for _ in sheet_data:  # число строк с текущим заполнением
             clear_up_range.append([str('')] * len(headers))
-
+        
+        print(f'clear_up_range - in sub: {type(clear_up_range)}, {clear_up_range[0]}, {clear_up_range[-1]}, {len(clear_up_range)} \n\n')
+        
         null_matrix = self.service.spreadsheets().values().batchUpdate(spreadsheetId=insiders_deals_page, body={
             "valueInputOption": "USER_ENTERED",
             "data": [{"range": "Update",
@@ -231,7 +233,9 @@ class InsidersDeals():
         new_d = [dataframe.columns.values.tolist()]
         for i in new_data:
             new_d.append(i)
-
+        
+        print(f'new_d - in sub: {type(new_d)}, {new_d[0]}, {new_d[-1]}, {len(new_d)} \n\n')
+        
         # заполнение новыми данными
         results = self.service.spreadsheets().values().batchUpdate(spreadsheetId=insiders_deals_page, body={
             "valueInputOption": "USER_ENTERED",
@@ -244,6 +248,7 @@ class InsidersDeals():
     def PerformAll(self):
         list_headers = ['declare_date', 'period_of_report', 'ticker', 'company_name', 'amount', 'linkToTxt', 'report_owner', 'module_amount', 'Share_of_Total_Cap']
         final_list = self.ConvertBeforeSaving()
+        print(f'final_list: {type(final_list)}, {final_list[0]}, {final_list[-1]}, {len(final_list)} \n\n')
 
         check_comp_values = self.Get_Spreadsheet_Data()
         tickers_capitals_dict = {}  # словарь тикер - капитал компании
@@ -256,6 +261,7 @@ class InsidersDeals():
             c.append(share)
 
         val_df_2 = pd.DataFrame(final_list, columns=list_headers).sort_values(by=['module_amount'], ascending=False).drop(columns=['module_amount'])
+        print(f'val_df_2 in main part: {val_df_2} \n\n')
 
         self.Sheet_filling(val_df_2)
         print(f'We\'re all set!')
