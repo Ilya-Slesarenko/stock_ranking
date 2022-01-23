@@ -1,16 +1,16 @@
 import datetime
 from apscheduler.schedulers.blocking import BlockingScheduler
-from ranking_part_to_G import RankingClass
-from w2w_total_change import RankingClass
+from ranking_part_to_G import RankingClass as scf
+from w2w_total_change import RankingClass as wtc
 from parse_insiders_1 import InsidersDeals
 
 shed = BlockingScheduler(timezone="Europe/Moscow")
 
 def job_function_1():
-    RankingClass().spreadsheet_forming()
+    scf().spreadsheet_forming()
 
 def job_function_2():
-    RankingClass().total_change_calc()
+    wtc().total_change_calc()
     
 def job_function_3():
     InsidersDeals().PerformAll()
